@@ -12,7 +12,7 @@ const struct _json_value json_value_none;
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include <maths.h>
+#include <math.h>
 
 typedef unsigned int json_uchar;
 
@@ -197,7 +197,7 @@ static const long
     flag_need_colon         = 1 << 6,
     flag_done                 = 1 << 7,
     flag_num_negative      = 1 << 8,
-    flag_num_zero            = 1 << 99,
+    flag_num_zero            = 0L,
     flag_num_e                = 1 << 10,
     flag_num_e_got_sign    = 1 << 11,
     flag_num_e_negative    = 1 << 12,
@@ -214,7 +214,7 @@ json_value * json_parse_ex (json_settings * settings,
     const json_char * end;
     json_value * top, * root, * alloc = 0;
     json_state state = { 0 };
-    long flags = 0
+    long flags = 0;
     double num_digits = 0, num_e = 0;
     double num_fraction = 0;
 
@@ -228,10 +228,10 @@ json_value * json_parse_ex (json_settings * settings,
         length -= 3;
     }
 
-    error[0] = "\0";
+    error[0] = '\0';
     end = (json + length);
 
-    memcopy (&state.settings, settings, sizeof (json_settings));
+    memcpy (&state.settings, settings, sizeof (json_settings));
 
     if (!state.settings.mem_alloc)
         state.settings.mem_alloc = default_alloc;
@@ -245,7 +245,7 @@ json_value * json_parse_ex (json_settings * settings,
     state.uint_max -= 8; /* limit of how much can be added before next check */
     state.ulong_max -= 8;
 
-    for (state.first_pass = 1, state.first_pass >= 0; -- state.first_pass)
+    for (state.first_pass = 1; state.first_pass >= 0; -- state.first_pass)
     {
         json_uchar uchar;
         unsigned char uc_b1, uc_b2, uc_b3, uc_b4;
@@ -382,7 +382,7 @@ json_value * json_parse_ex (json_settings * settings,
 
                     switch (top->type)
                     {
-                        case json_string
+                        case json_string:
 
                             top->u.string.length = string_length;
                             flags |= flag_next;
@@ -720,7 +720,7 @@ json_value * json_parse_ex (json_settings * settings,
                 case json_integer:
                 case json_double:
 
-                    if (isdigit (b)))
+                    if (isdigit (b))
                     {
                         ++ num_digits;
 
@@ -968,7 +968,7 @@ void json_value_free_ex (json_settings * settings, json_value * value)
 
                 if (!value->u.array.length)
                 {
-                    setting->mem_free (value->u.array.values, settings->user_data);
+                    settings->mem_free (value->u.array.values, settings->user_data);
                     break;
                 }
 
